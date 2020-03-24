@@ -1,61 +1,57 @@
-import React from 'react';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import axios from "axios";
 
-import { axiosWithAuth } from '../utils/axiosWithAuth';
+const Login = () => {
+	const history = useHistory();
+	const [credentials, setCredentials] = useState({
+		username: "",
+		password: ""
+	});
 
-class Login extends React.Component {
-  state = {
-    credentials: {
-      username: '',
-      password: ''
-    }
-  };
+	const handleChange = e => {
+		setCredentials({
+			...credentials,
+			[e.target.name]: e.target.value
+		});
+	};
 
-  handleChange = e => {
-    this.setState({
-      credentials: {
-        ...this.state.credentials,
-        [e.target.name]: e.target.value
-      }
-    });
-  };
+	const handleSubmit = e => {
+		e.preventDefault();
+		axios
+			.post("http://localhost:5000/api/login", credentials)
+			.then(res => {
+				localStorage.setItem("token", JSON.stringify(res.data.payload));
+				history.push("/protected");
+			})
+			.catch(err => console.log(err.response));
+		setCredentials({
+			username: "",
+			password: ""
+		});
+	};
 
-  login = e => {
-    e.preventDefault();
-    axiosWithAuth()
-      .post('/api/login', this.state.credentials)
-      .then(res => {
-        console.log(res);
-        localStorage.setItem('token', JSON.stringify(res.data.payload));
-        this.props.history.push('/protected');
-      })
-      .catch(err => console.log(err.response));
-  };
-
-  render() {
-    return (
-      <div>
-        <form onSubmit={this.login}>
-            <label htmlFor="username">Username: </label>
-            <input
-                type="text"
-                id="username"
-                name="username"
-                value={this.state.credentials.username}
-                onChange={this.handleChange}
-            /><br></br>
-            <label htmlFor="password">Password: </label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                value={this.state.credentials.password}
-                onChange={this.handleChange}
-            /><br></br>
-            <button>Log in</button>
-        </form>
-      </div>
-    );
-  }
-}
+	return (
+		<div className="login">
+			<form onSubmit={handleSubmit}>
+				<input
+					type="text"
+					name="username"
+					value={credentials.username}
+					onChange={handleChange}
+					placeholder="Username"
+				/>
+				<input
+					type="password"
+					name="password"
+					value={credentials.password}
+					onChange={handleChange}
+					placeholder="Password"
+				/>
+				<button type="submit">Login</button>
+			</form>
+		</div>
+	);
+};
 
 export default Login;
