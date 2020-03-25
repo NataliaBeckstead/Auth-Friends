@@ -10,12 +10,15 @@ const FriendCard = ({ friend, handleDelete, handleEdit }) => {
 	return (
 		<div className="friend">
 			{!isEditing && (
-				<div className="friend-card">
-					<FontAwesomeIcon icon={faPen} onClick={() => setIsEditing(true)} />
-					<FontAwesomeIcon
-						icon={faTrash}
-						onClick={() => handleDelete(friend.id)}
-					/>
+				<div className="card">
+                    <div className="icons">
+                        <FontAwesomeIcon className="icon" icon={faPen} onClick={() => setIsEditing(true)} />
+                        <FontAwesomeIcon
+                            className="icon"
+                            icon={faTrash}
+                            onClick={() => handleDelete(friend.id)}
+                        />
+                    </div>
 					<h2>{friend.name}</h2>
 					<p>Age: {friend.age}</p>
 					<p>Email: {friend.email}</p>
